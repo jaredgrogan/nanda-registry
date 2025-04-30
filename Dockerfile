@@ -1,22 +1,8 @@
-﻿FROM python:3.10-slim
+﻿FROM nginx:alpine
 
-WORKDIR /app
+# Create a test HTML file
+RUN echo '<html><body><h1>NANDA Registry Test</h1><p>Deployment works!</p></body></html>' > /usr/share/nginx/html/index.html
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt gunicorn
+EXPOSE 80
 
-# Copy project
-COPY . .
-
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
-# Make port configurable via environment variable
-ENV PORT=8000
-
-# Expose the port
-EXPOSE \$PORT
-
-# Run gunicorn
-CMD gunicorn mcp_nexus.wsgi:application --bind 0.0.0.0:\$PORT
+CMD ["nginx", "-g", "daemon off;"]
